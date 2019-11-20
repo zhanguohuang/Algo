@@ -1,8 +1,5 @@
 package org.zhan.leetcode;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。
 
@@ -19,28 +16,27 @@ import java.util.Map;
  */
 public class T5Solution {
 
-    public static String longestPalindrome(String s) {
-        String result = "";
-        if (s.length() >= 1) {
-           result = String.valueOf(s.charAt(0));
-        }
-        if (s.length() == 0) {
-            return result;
-        }
-        Map<Character, Integer> map = new HashMap<>();
-        for (int i=0;i< s.length(); i++) {
-            char c = s.charAt(i);
-            if (map.keySet().contains(c)) {
-                if (i + 1 - map.get(c) > result.length()) {
-                    result = s.substring(map.get(c), i+1);
-                }
+    public String longestPalindrome(String s) {
+        if (s == null || s.length() < 1) return "";
+        int start = 0, end = 0;
+        for (int i = 0; i < s.length(); i++) {
+            int len1 = expandAroundCenter(s, i, i);
+            int len2 = expandAroundCenter(s, i, i + 1);
+            int len = Math.max(len1, len2);
+            if (len > end - start) {
+                start = i - (len - 1) / 2;
+                end = i + len / 2;
             }
-            map.put(c, i);
         }
-        return result;
+        return s.substring(start, end + 1);
     }
 
-    public static void main(String[] args) {
-        System.out.println(longestPalindrome("ac"));
+    private int expandAroundCenter(String s, int left, int right) {
+        int L = left, R = right;
+        while (L >= 0 && R < s.length() && s.charAt(L) == s.charAt(R)) {
+            L--;
+            R++;
+        }
+        return R - L - 1;
     }
 }
